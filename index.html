@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>越南语-语法-排序练习</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding-bottom: 300px;
+            background-color: #f7fbf3;
+        }
+        
+        #gameContainer {
+            min-height: calc(100vh - 150px);
+        }
+        
+        #infoBox {
+            width: 95%; 
+            max-width: 700px;
+            min-height: 100px; 
+            margin: 0 auto; 
+            border: 2px solid #72a9db; /*041b31 1f4263*/
+            background: #63a0d8; /*ecf2e4 fefefc 63a0d8 */
+            color: #ffffff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: clamp(40px, 5vw, 60px);
+            font-weight: bold;
+        }
+        
+        #contactBox, #instructionBox {
+            width: 90%;
+            max-width: 700px;
+            min-height: 25px;
+            margin: 0px auto;
+            border: 2px solid #72a9db;
+            background: #63a0d8;
+            color: #ffd300;
+            padding-left: 20px;
+            display: flex;
+            align-items: center;
+            font-size: clamp(16px, 2vw, 20px);
+            font-weight: bold;
+        }
+        
+        #instructionBox {
+            color: #f7e19c;
+        }
+
+        #indicator, #indicator2 {
+            width: 90%;
+            max-width: 700px;
+            min-height: 70px;
+            margin: 15px auto;
+            padding: 15px;
+            border: 3px solid #fed16a;
+            background: #ffffe0;
+            border-radius: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: bold;
+        }
+        
+        #indicator2 {
+            background: #fffbef;
+            border: 3px solid #ccc;
+            min-height: 90px;
+            transition: all .4s;
+        }
+        
+        #indicator2.correct {
+            background: #B7D7AA !important;
+            border-color: #5ba346;
+        }
+        
+        #indicator2.wrong {
+            background: #ffcccc !important;
+            border-color: #CE6D5E;
+        }
+
+        .word-btn {
+            padding: 10px 20px;
+            background: #fff;
+            border: 2px solid #63a0d8;
+            border-radius: 12px;
+            font-size: clamp(32px, 5vw, 48px);
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 3px 6px rgba(0,0,0,.15);
+            transition: all .2s;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .word-btn.used {
+            opacity: 0.35;
+            pointer-events: none;
+        }
+        
+        .word-btn-in-answer {
+            background: #ffd700 !important;
+            animation: pop .3s;
+        }
+        
+        @keyframes pop {
+            0% { transform: scale(0.8); }
+            100% { transform: scale(1); }
+        }
+
+        #optionsPool {
+            width: 95%;
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        #controls {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 800px;
+            background: #f7fbf3;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+        
+        button {
+            padding: 8px 12px;
+            margin: 2px 3px;
+            cursor: pointer;
+            border: 2px solid #63a0d8;
+            background: #63a0d8;
+            color: #fffbef;
+            font-size: 28px;
+            border-radius: 5px;
+        }
+        
+        .active-mode {
+            border: 2px solid #fed16a;
+        }
+        
+        .disabled {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        #results, #score {
+            width: 95%;
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 28px;
+            display: none;
+        }
+        
+        #results {
+            border: 2px solid #734A2E;
+            background: #fffbef;
+        }
+        
+        #score {
+            color: #FF6820;
+            background: #fffbef;
+            border: 2px solid #FF6820;
+        }
+                #sentenceNumber {
+                        width: 70px;
+                        height: 30px;
+                        text-align: center;
+                        font-size: 20px;
+                        border: 2px solid #63a0d8;
+                        border-radius: 5px;
+                        margin: 0 5px;
+                }
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 220px;
+            }
+            
+            button {
+                font-size: 20px;
+            }
+            
+            .word-btn {
+                font-size: 28px;
+                padding: 8px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="infoBox">习得越南语<br>语法 - 排序练习</div>
+        <div id="contactBox">讲师-阮玉煌 | Weixin：XiDeYueNanYu</div>
+        <div id="instructionBox">把词语按正确顺序排列 </div>
+
+        <div id="indicator"></div>
+        <div id="indicator2"></div>
+        <div id="optionsPool"></div>
+
+        <div id="results"></div>
+        <div id="score">0/0</div>
+    </div>
+
+    <div id="controls">
+        <div>
+            <button id="freeModeBtn" class="active-mode">自由模式</button>
+            <button id="testModeBtn">作业模式</button>
+        </div>
+        <div>
+            <button id="autoContinueBtn">自动继续</button>
+            <button id="showHideBtn">显示-隐藏</button>
+        </div>
+        <div>
+            <button id="prevBtn">◀</button>
+            <input type="text" id="sentenceNumber" inputmode="numeric">
+            <button id="nextBtn">▶</button>
+            <button id="replayBtn">再听一遍</button>
+        </div>
+    </div>
+
+    <audio id="mainAudio"></audio>
+    <audio id="correctAudio" src="Dung.mp3"></audio>
+    <audio id="wrongAudio" src="Sai.mp3"></audio>
+
+    <script>
+
+const sentences = [
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.681,
+        "end": 2.191,
+        "correctAnswer": "【Trông】【anh】【ấy】【thế】【nào】?",
+        "translation": "他看起来怎么样？",
+        "options": [
+            "Trông anh ẩy thế nào?",
+            "Rông anh ấy thế nào?",
+            "Trông anh ấy thê nào?",
+            "Trông anh ấy thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 2.791,
+        "end": 4.241,
+        "correctAnswer": "【Anh】【ấy】【rất】【cao】.",
+        "translation": "他很高。",
+        "options": [
+            "Anh ấy rết cao.",
+            "Anh ấy rất khao.",
+            "Ánh ấy rất cao.",
+            "Anh ấy rất cao."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 4.811,
+        "end": 6.331,
+        "correctAnswer": "【Chị】【ấy】【trông】【thế】【nào】?",
+        "translation": "(阿)姐看起来怎么样？",
+        "options": [
+            "Chị ấy trông thê nào?",
+            "Chị ấy sông thế nào?",
+            "Gị ấy trông thế nào?",
+            "Chị ấy trông thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 6.801,
+        "end": 8.151,
+        "correctAnswer": "【Chị】【ấy】【rất】【xinh】.",
+        "translation": "(阿)姐很漂亮。",
+        "options": [
+            "Chị ấy rất xánh.",
+            "Chị ấy rắt xinh.",
+            "Gị ấy rất xinh.",
+            "Chị ấy rất xinh."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 8.741,
+        "end": 10.301,
+        "correctAnswer": "【Trông】【bà】【ấy】【thế】【nào】?",
+        "translation": "(阿)奶看起来怎么样？",
+        "options": [
+            "Trông bà ấy thê nào?",
+            "Trôn bà ấy thế nào?",
+            "Trông bả ấy thế nào?",
+            "Trông bà ấy thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 10.771,
+        "end": 12.371,
+        "correctAnswer": "【Trông】【bà】【ấy】【rất】【buồn】.",
+        "translation": "(阿)奶看起来很难过。",
+        "options": [
+            "Trông bà ấy rất bàn.",
+            "Trông bà ẩy rất buồn.",
+            "Trông bà ấy rất bùn.",
+            "Trông bà ấy rất buồn."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 12.971,
+        "end": 14.731,
+        "correctAnswer": "【Chiếc】【xe】【ấy】【trông】【thế】【nào】?",
+        "translation": "那辆车看起来怎么样？",
+        "options": [
+            "Chiếc se ấy trông thế nào?",
+            "Chiếc xe ấy sông thế nào?",
+            "Chiếc xe ấy trông thê nào?",
+            "Chiếc xe ấy trông thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 15.281,
+        "end": 17.371,
+        "correctAnswer": "【Chiếc】【xe】【này】【trông】【có】【vẻ】【đẹp】【đấy】.",
+        "translation": "这辆车看起来挺漂亮的。",
+        "options": [
+            "Chiếc xe này trông có vẻ dép đấy.",
+            "Chiếc xe này trông có vẻ đẹp đáy.",
+            "Chiếc xe nay trông có vẻ đẹp đấy.",
+            "Chiếc xe này trông có vẻ đẹp đấy."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 17.961,
+        "end": 19.361,
+        "correctAnswer": "【Nước】【có】【nóng】【không】?",
+        "translation": "水热吗？",
+        "options": [
+            "Nước cỏ nóng không?",
+            "Nưc có nống không?",
+            "Nước có nóng không?",
+            "Nưc có nóng không?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 19.741,
+        "end": 21.021,
+        "correctAnswer": "【Nước】【rất】【nóng】.",
+        "translation": "水很热。",
+        "options": [
+            "Nướt rất nóng.",
+            "Nướt rết nóng.",
+            "Nước rết nóng.",
+            "Nước rất nóng."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 21.541,
+        "end": 23.141,
+        "correctAnswer": "【Thời】【tiết】【có】【lạnh】【không】?",
+        "translation": "天气冷吗？",
+        "options": [
+            "Thời tiếc có lạnh không?",
+            "Thòi tiết có lạnh không?",
+            "Thời tiết có lảnh không?",
+            "Thời tiết có lạnh không?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 23.501,
+        "end": 24.851,
+        "correctAnswer": "【Thời】【tiết】【lạnh】【lắm】.",
+        "translation": "天气非常冷。",
+        "options": [
+            "Thời tiết lành lắm.",
+            "Thời tiếc lạnh lắm.",
+            "Thời tiết lạnh lám.",
+            "Thời tiết lạnh lắm."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 25.381,
+        "end": 27.141,
+        "correctAnswer": "【Bài】【hát】【ấy】【có】【hay】【không】?",
+        "translation": "那首歌好听吗？",
+        "options": [
+            "Bài hạt ấy có hay không?",
+            "Bài hát ấy cõ hay không?",
+            "Bài hát ẩy có hay không?",
+            "Bài hát ấy có hay không?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 27.651,
+        "end": 29.451,
+        "correctAnswer": "【Bài】【hát】【ấy】【rất】【hay】.",
+        "translation": "那首歌很好听。",
+        "options": [
+            "Bài hát ấy rất hây.",
+            "Bài hát ấy rết hay.",
+            "Bài hạt ấy rất hay.",
+            "Bài hát ấy rất hay."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 29.951,
+        "end": 31.791,
+        "correctAnswer": "【Bộ】【phim】【ấy】【có】【hay】【không】?",
+        "translation": "那部电影好看吗？",
+        "options": [
+            "Bộ phim ấy có hây không?",
+            "Bồ phim ấy có hay không?",
+            "Bộ phim ấy có hoay không?",
+            "Bộ phim ấy có hay không?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 32.191,
+        "end": 33.741,
+        "correctAnswer": "【Bộ】【phim】【ấy】【dở】【lắm】.",
+        "translation": "那部电影很差。",
+        "options": [
+            "Bộ phim ấy dở lám.",
+            "Bộ phim ấy giở lắm.",
+            "Bô phim ấy dở lắm.",
+            "Bộ phim ấy dở lắm."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 34.311,
+        "end": 36.161,
+        "correctAnswer": "【Món】【ăn】【ấy】【có】【ngon】【không】?",
+        "translation": "那道菜好吃吗？",
+        "options": [
+            "Món ăn ấy có ngỏn không?",
+            "Món ăn ấy có gon không?",
+            "Món ăn ẩy có ngon không?",
+            "Món ăn ấy có ngon không?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 36.541,
+        "end": 38.161,
+        "correctAnswer": "【Món】【ăn】【ấy】【rất】【ngon】.",
+        "translation": "那道菜很好吃。",
+        "options": [
+            "Món ăn ấy rắt ngon.",
+            "Món ăn ấy rất ngôn.",
+            "Món ăn ấy rất ngong.",
+            "Món ăn ấy rất ngon."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 38.701,
+        "end": 40.131,
+        "correctAnswer": "【Phở】【có】【ngon】【không】?",
+        "translation": "越南河粉好吃吗？",
+        "options": [
+            "Phở có ngôn không?",
+            "Phở có gon không?",
+            "Phở có ngong không?",
+            "Phở có ngon không?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 40.661,
+        "end": 41.821,
+        "correctAnswer": "【Phở】【dở】【lắm】.",
+        "translation": "河粉不好吃。",
+        "options": [
+            "Phở dở lám.",
+            "Phở giở lắm.",
+            "Phỏ dở lắm.",
+            "Phở dở lắm."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 42.511,
+        "end": 43.961,
+        "correctAnswer": "【Ông】【ấy】【thế】【nào】?",
+        "translation": "(阿)爷怎么样？",
+        "options": [
+            "Ông ấy thê nào?",
+            "Ông ẩy thế nào?",
+            "Bông ấy thế nào?",
+            "Ông ấy thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 44.231,
+        "end": 45.771,
+        "correctAnswer": "【Ông】【ấy】【rất】【vui】.",
+        "translation": "(阿)爷很开心。",
+        "options": [
+            "Ông ấy rất vuy.",
+            "Ông ấy rết vui.",
+            "Ông ấy rất fui.",
+            "Ông ấy rất vui."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 46.351,
+        "end": 48.401,
+        "correctAnswer": "【Chị】【ấy】【rất】【buồn】【có】【phải】【không】?",
+        "translation": "(阿)姐很难过，对吗？",
+        "options": [
+            "Chị ấy rất buồn có phai không?",
+            "Chị ấy rất bùn có phải không?",
+            "Gị ấy rất buồn có phải không?",
+            "Chị ấy rất buồn có phải không?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 49.031,
+        "end": 51.201,
+        "correctAnswer": "【Phải】, 【chị】【ấy】【rất】【buồn】.",
+        "translation": "是的，(阿)姐很难过。",
+        "options": [
+            "Phải, chị ấy rất bùn.",
+            "Phải, chị ấy rất bàn.",
+            "Phải, gị ấy rất buồn.",
+            "Phải, chị ấy rất buồn."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 51.811,
+        "end": 54.101,
+        "correctAnswer": "【Con】【chó】【ấy】【rất】【dữ】【có】【phải】【không】?",
+        "translation": "那只狗很凶，对吗？",
+        "options": [
+            "Con chó ấy rất dủ có phải không?",
+            "Con chó ấy rát dữ có phải không?",
+            "Con chó ấy rất dự có phải không?",
+            "Con chó ấy rất dữ có phải không?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 54.751,
+        "end": 57.181,
+        "correctAnswer": "【Phải】, 【con】【chó】【ấy】【rất】【dữ】.",
+        "translation": "是的，那只狗很凶。",
+        "options": [
+            "Phải, con chó ấy rất dử.",
+            "Phải, con chó ẩy rất dữ.",
+            "Phải, con chó ấy rát dữ.",
+            "Phải, con chó ấy rất dữ."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 57.791,
+        "end": 59.901,
+        "correctAnswer": "【Cô】【ấy】【rất】【hiền】【có】【phải】【không】?",
+        "translation": "她很温柔，对吗？",
+        "options": [
+            "Cô ấy rát hiền có phải không?",
+            "Cô ấy rất hền có phải không?",
+            "Gô ấy rất hiền có phải không?",
+            "Cô ấy rất hiền có phải không?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 60.381,
+        "end": 62.521,
+        "correctAnswer": "【Đúng】, 【cô】【ấy】【rất】【hiền】.",
+        "translation": "对，(阿)她很温柔。",
+        "options": [
+            "Đúng, cô ấy rất hền.",
+            "Đúng, cô ấy rát hiền.",
+            "Dúng, cô ấy rất hiền.",
+            "Đúng, cô ấy rất hiền."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 63.041,
+        "end": 64.461,
+        "correctAnswer": "【Căn】【phòng】【thế】【nào】?",
+        "translation": "房间怎么样？",
+        "options": [
+            "Căn vòng thế nào?",
+            "Căn phòng thê nào?",
+            "Căng phòng thế nào?",
+            "Căn phòng thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 64.891,
+        "end": 66.421,
+        "correctAnswer": "【Căn】【phòng】【rất】【sáng】.",
+        "translation": "房间很亮。",
+        "options": [
+            "Căn phòng rất sảng.",
+            "Căn vòng rất sáng.",
+            "Căn phòng rết sáng.",
+            "Căn phòng rất sáng."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 67.001,
+        "end": 68.391,
+        "correctAnswer": "【Phòng】【họp】【thế】【nào】?",
+        "translation": "会议室怎么样？",
+        "options": [
+            "Phòng hộp thế nào?",
+            "Phòng họp thê nào?",
+            "Phong họp thế nào?",
+            "Phòng họp thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 68.691,
+        "end": 70.111,
+        "correctAnswer": "【Phòng】【họp】【rất】【tối】.",
+        "translation": "会议室很暗。",
+        "options": [
+            "Phòng họp rất tỏi.",
+            "Phòng hộp rất tối.",
+            "Phòng họp rát tối.",
+            "Phòng họp rất tối."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 70.791,
+        "end": 72.371,
+        "correctAnswer": "【Quyển】【sách】【có】【mới】【không】?",
+        "translation": "那本书是新的吗？",
+        "options": [
+            "Quyển sách có mời không?",
+            "Quyển sách có mơi không?",
+            "Quyển xách có mới không?",
+            "Quyển sách có mới không?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 72.791,
+        "end": 74.941,
+        "correctAnswer": "【Không】, 【quyển】【sách】【rất】【cũ】.",
+        "translation": "不是，那本书很旧了。",
+        "options": [
+            "Không, quyển sách rất cú.",
+            "Không, quyển sắt rất cũ.",
+            "Khong, quyển sách rất cũ.",
+            "Không, quyển sách rất cũ."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 75.501,
+        "end": 77.041,
+        "correctAnswer": "【Quyển】【từ】【điển】【thế】【nào】?",
+        "translation": "那本词典怎么样？",
+        "options": [
+            "Quyển từ điển thê nào?",
+            "Quyển tư điển thế nào?",
+            "Quyển tờ điển thế nào?",
+            "Quyển từ điển thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 77.481,
+        "end": 79.201,
+        "correctAnswer": "【Quyển】【từ】【điển】【rất】【dày】.",
+        "translation": "那本词典很厚。",
+        "options": [
+            "Quyển từ điển rất đày.",
+            "Quyển từ điển rát dày.",
+            "Quyển từ diển rất dày.",
+            "Quyển từ điển rất dày."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 79.751,
+        "end": 81.121,
+        "correctAnswer": "【Quyển】【vở】【thế】【nào】?",
+        "translation": "那本练习本怎么样？",
+        "options": [
+            "Quyển vỡ thế nào?",
+            "Quyển vở thê nào?",
+            "Quỳển vở thế nào?",
+            "Quyển vở thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 81.451,
+        "end": 82.781,
+        "correctAnswer": "【Quyển】【vở】【mỏng】【lắm】.",
+        "translation": "那本练习本很薄。",
+        "options": [
+            "Quyển vở móng lắm.",
+            "Quyển vở mỏng lám.",
+            "Quyển vở mông lắm.",
+            "Quyển vở mỏng lắm."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 83.481,
+        "end": 85.161,
+        "correctAnswer": "【Con】【mèo】【dễ】【thương】【quá】!",
+        "translation": "这只猫太可爱了！",
+        "options": [
+            "Con mèo rễ thương quá!",
+            "Con mèo dễ thương quá.",
+            "Con mều dễ thương quá!",
+            "Con mèo dễ thương quá!"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 85.801,
+        "end": 87.401,
+        "correctAnswer": "【Anh】【ấy】【rất】【khỏe】.",
+        "translation": "他很健康。",
+        "options": [
+            "Anh ấy rất khoẻ.",
+            "Anh ấy rát khỏe.",
+            "Ánh ấy rất khỏe.",
+            "Anh ấy rất khỏe."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 87.771,
+        "end": 89.341,
+        "correctAnswer": "【Bà】【ấy】【rất】【yếu】.",
+        "translation": "(阿)奶很虚弱。",
+        "options": [
+            "Bà ấy rất yểu.",
+            "Bà ẩy rất yếu.",
+            "Bà ấy rát yếu.",
+            "Bà ấy rất yếu."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 89.801,
+        "end": 91.401,
+        "correctAnswer": "【Bác】【ấy】【rất】【béo】.",
+        "translation": "(阿)伯很胖。",
+        "options": [
+            "Bác ấy rất bếu.",
+            "Bát ấy rất béo.",
+            "Bác ấy rát béo.",
+            "Bác ấy rất béo."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 91.831,
+        "end": 93.361,
+        "correctAnswer": "【Chị】【ấy】【rất】【gầy】.",
+        "translation": "(阿)姐很瘦。",
+        "options": [
+            "Chị ấy rất gây.",
+            "Gị ấy rất gầy.",
+            "Chị ấy rát gầy.",
+            "Chị ấy rất gầy."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 93.831,
+        "end": 95.451,
+        "correctAnswer": "【Ông】【ấy】【rất】【già】.",
+        "translation": "(阿)爷很老。",
+        "options": [
+            "Ông ấy rất giá.",
+            "Ông ẩy rất già.",
+            "Ông ấy rát già.",
+            "Ông ấy rất già."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 95.801,
+        "end": 97.481,
+        "correctAnswer": "【Em】【ấy】【rất】【trẻ】.",
+        "translation": "(阿)他/她很年轻。",
+        "options": [
+            "Em ấy rất trẽ.",
+            "Em ấy rất che.",
+            "Em ấy rát trẻ.",
+            "Em ấy rất trẻ."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 97.991,
+        "end": 99.361,
+        "correctAnswer": "【Tôi】【rất】【cao】.",
+        "translation": "我很高。",
+        "options": [
+            "Tôi rát cao.",
+            "Tôi rất khao.",
+            "Tơi rất cao.",
+            "Tôi rất cao."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 99.791,
+        "end": 101.131,
+        "correctAnswer": "【Bạn】【tôi】【rất】【thấp】.",
+        "translation": "我的朋友很矮。",
+        "options": [
+            "Bạn tôi rất tháp.",
+            "Bạn tôi rát thấp.",
+            "Bạn tôi rất thăp.",
+            "Bạn tôi rất thấp."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 101.701,
+        "end": 103.571,
+        "correctAnswer": "【Cậu】【ấy】【là】【người】【thế】【nào】?",
+        "translation": "他是个怎样的人？",
+        "options": [
+            "Cậu ấy là người thê nào?",
+            "Cậu ấy là ngươi thế nào?",
+            "Cậu ẩy là người thế nào?",
+            "Cậu ấy là người thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 103.911,
+        "end": 105.531,
+        "correctAnswer": "【Cậu】【ấy】【rất】【keo】【kiệt】.",
+        "translation": "他非常小气。",
+        "options": [
+            "Cậu ấy rất keo kệt.",
+            "Cậu ấy rất keu kiệt.",
+            "Cậu ấy rát keo kiệt.",
+            "Cậu ấy rất keo kiệt."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 106.101,
+        "end": 107.941,
+        "correctAnswer": "【Chị】【ấy】【là】【người】【thế】【nào】?",
+        "translation": "(阿)姐是个怎样的人？",
+        "options": [
+            "Chị ấy là ngươi thế nào?",
+            "Gị ấy là người thế nào?",
+            "Chị ấy là người thê nào?",
+            "Chị ấy là người thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 108.301,
+        "end": 109.911,
+        "correctAnswer": "【Chị】【ấy】【rất】【hà】【tiện】.",
+        "translation": "(阿)姐很吝啬。",
+        "options": [
+            "Chị ấy rất hà tiển.",
+            "Chị ẩy rất hà tiện.",
+            "Gị ấy rất hà tiện.",
+            "Chị ấy rất hà tiện."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 110.441,
+        "end": 112.371,
+        "correctAnswer": "【Anh】【ấy】【là】【người】【thế】【nào】?",
+        "translation": "他是个怎样的人？",
+        "options": [
+            "Ánh ấy là người thế nào?",
+            "Anh ấy là người thê nào?",
+            "Anh ẩy là người thế nào?",
+            "Anh ấy là người thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 112.761,
+        "end": 114.361,
+        "correctAnswer": "【Anh】【ấy】【rất】【rộng】【rãi】.",
+        "translation": "他很大方。",
+        "options": [
+            "Anh ấy rất rỗng rãi.",
+            "Anh ấy rất rộng rái.",
+            "Ánh ấy rất rộng rãi.",
+            "Anh ấy rất rộng rãi."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 114.871,
+        "end": 116.791,
+        "correctAnswer": "【Ông】【ấy】【là】【người】【thế】【nào】?",
+        "translation": "(阿)爷是个怎样的人？",
+        "options": [
+            "Ông ẩy là người thế nào?",
+            "Ông ấy là ngươi thế nào?",
+            "Ông ấy là người thê nào?",
+            "Ông ấy là người thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 117.211,
+        "end": 118.961,
+        "correctAnswer": "【Ông】【ấy】【rất】【ích】【kỷ】.",
+        "translation": "(阿)爷很自私。",
+        "options": [
+            "Ông ấy rất ịch kỷ.",
+            "Ông ấy rát ích kỷ.",
+            "Ông ẩy rất ích kỷ.",
+            "Ông ấy rất ích kỷ."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 119.501,
+        "end": 121.491,
+        "correctAnswer": "【Cô】【ấy】【rất】【tự】【tin】【phải】【không】?",
+        "translation": "她很自信，对吗？",
+        "options": [
+            "Cô ấy rất tự tin phãi không?",
+            "Gô ấy rất tự tin phải không?",
+            "Cô ấy rát tự tin phải không?",
+            "Cô ấy rất tự tin phải không?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 121.921,
+        "end": 124.201,
+        "correctAnswer": "【Đúng】. 【Cô】【ấy】【rất】【tự】【tin】.",
+        "translation": "对。她很自信。",
+        "options": [
+            "Đúng. Cô ấy rát tự tin.",
+            "Đúng. Gô ấy rất tự tin.",
+            "Đúng. Cô ẩy rất tự tin.",
+            "Đúng. Cô ấy rất tự tin."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 124.511,
+        "end": 126.281,
+        "correctAnswer": "【Em】【ấy】【rất】【tự】【ty】.",
+        "translation": "(阿)他/她很自卑。",
+        "options": [
+            "Em ấy rất tự tỳ.",
+            "Em ấy rát tự ty.",
+            "Em ẩy rất tự ty.",
+            "Em ấy rất tự ty."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 126.731,
+        "end": 128.521,
+        "correctAnswer": "【Bạn】【ấy】【rất】【sôi】【nổi】.",
+        "translation": "他/她很活跃。",
+        "options": [
+            "Bạn ấy rất xôi nổi.",
+            "Bạn ấy rất sôi nỗi.",
+            "Bạn ẩy rất sôi nổi.",
+            "Bạn ấy rất sôi nổi."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 128.971,
+        "end": 130.471,
+        "correctAnswer": "【Anh】【ấy】【rất】【trầm】【tĩnh】.",
+        "translation": "他很沉静。",
+        "options": [
+            "Anh ấy rất trầm tĩnh.",
+            "Ánh ấy rất trầm tĩnh.",
+            "Anh ấy rát trầm tĩnh.",
+            "Anh ẩy rất trầm tĩnh."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 131.071,
+        "end": 132.971,
+        "correctAnswer": "【Thầy】【ấy】【là】【người】【thế】【nào】?",
+        "translation": "老师是个怎样的人？",
+        "options": [
+            "Thầy ấy là người thê nào?",
+            "Thầy ấy là ngươi thế nào?",
+            "Thầy ẩy là người thế nào?",
+            "Thầy ấy là người thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 133.391,
+        "end": 135.021,
+        "correctAnswer": "【Thầy】【ấy】【rất】【dễ】【tính】.",
+        "translation": "老师很好相处。",
+        "options": [
+            "Thầy ấy rất dễ tĩnh.",
+            "Thầy ấy rát dễ tính.",
+            "Thầy ẩy rất dễ tính.",
+            "Thầy ấy rất dễ tính."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 135.441,
+        "end": 137.191,
+        "correctAnswer": "【Cô】【ấy】【rất】【khó】【tính】.",
+        "translation": "她很难相处。",
+        "options": [
+            "Cô ấy rát khó tính.",
+            "Cô ấy rất khô tính.",
+            "Gô ấy rất khó tính.",
+            "Cô ấy rất khó tính."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 137.561,
+        "end": 139.511,
+        "correctAnswer": "【Ông】【ấy】【là】【người】【thế】【nào】?",
+        "translation": "(阿)爷是个怎样的人？",
+        "options": [
+            "Ông ẩy là người thế nào?",
+            "Ông ấy là ngươi thế nào?",
+            "Ông ấy là người thê nào?",
+            "Ông ấy là người thế nào?"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 139.831,
+        "end": 141.451,
+        "correctAnswer": "【Ông】【ấy】【rất】【nóng】【tính】.",
+        "translation": "(阿)爷脾气很急。",
+        "options": [
+            "Ông ấy rất nỏng tính.",
+            "Ông ấy rất nóng tĩnh.",
+            "Ông ấy rát nóng tính.",
+            "Ông ấy rất nóng tính."
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 141.941,
+        "end": 143.440375,
+        "correctAnswer": "【Chị】【ấy】【rất】【hòa】【đồng】.",
+        "translation": "(阿)姐很合群。",
+        "options": [
+            "Gị ấy rất hòa đồng.",
+            "Chị ẩy rất hòa đồng.",
+            "Chị ấy rát hòa đồng.",
+            "Chị ấy rất hòa đồng."
+        ]
+    }
+];
+
+        let currentIndex = 0;
+        let isFreeMode = true;
+        let autoContinue = false;
+        let showTranslation = true;
+        let correctCount = 0;
+        let userAnswers = [];
+        let selectedWords = [];
+        let isChecking = false;
+        let isAudioPlaying = false;
+
+        const audio = document.getElementById('mainAudio');
+        const correctAudio = document.getElementById('correctAudio');
+        const wrongAudio = document.getElementById('wrongAudio');
+        const indicator = document.getElementById('indicator');
+        const indicator2 = document.getElementById('indicator2');
+        const optionsPool = document.getElementById('optionsPool');
+        const sentenceNumber = document.getElementById('sentenceNumber');
+        const scoreDisplay = document.getElementById('score');
+        const resultsDisplay = document.getElementById('results');
+
+        function init() {
+            userAnswers = new Array(sentences.length).fill(null);
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            sentenceNumber.value = currentIndex + 1;
+            const s = sentences[currentIndex];
+            
+            if (showTranslation) {
+                indicator.innerHTML = `<div style="color:#63a0d8;font-size:0.6em;">${s.translation}</div>`;
+            } else {
+                indicator.innerHTML = '';
+            }
+
+            const words = s.correctAnswer.match(/【(.*?)】/g).map(t => t.slice(1,-1));
+            const shuffled = shuffleArray(words);
+
+            optionsPool.innerHTML = '';
+            indicator2.innerHTML = '';
+            indicator2.className = '';
+            selectedWords = [];
+            isChecking = false;
+
+            shuffled.forEach(word => {
+                const btn = document.createElement('div');
+                btn.className = 'word-btn';
+                btn.textContent = word;
+                btn.onclick = () => selectWord(word, btn);
+                optionsPool.appendChild(btn);
+            });
+
+            document.getElementById('prevBtn').classList.toggle('disabled', !isFreeMode && currentIndex === 0);
+        }
+
+        function selectWord(word, btn) {
+            if (btn.classList.contains('used')) {
+                const idx = selectedWords.indexOf(word);
+                if (idx > -1) {
+                    selectedWords.splice(idx, 1);
+                    btn.classList.remove('used');
+                    renderAnswerArea();
+                }
+                return;
+            }
+
+            selectedWords.push(word);
+            btn.classList.add('used');
+            renderAnswerArea();
+
+            indicator2.classList.remove('correct', 'wrong');
+            
+            if (selectedWords.length === getCorrectWords().length && !isChecking) {
+                isChecking = true;
+                setTimeout(checkAnswer, 400);
+            }
+        }
+
+        function renderAnswerArea() {
+            indicator2.innerHTML = '';
+            selectedWords.forEach((word, i) => {
+                const btn = document.createElement('div');
+                btn.className = 'word-btn word-btn-in-answer';
+                btn.textContent = word;
+                btn.onclick = () => {
+                    selectedWords.splice(i, 1);
+                    renderAnswerArea();
+                    Array.from(optionsPool.children).find(b => b.textContent === word)?.classList.remove('used');
+                    isChecking = false;
+                    indicator2.classList.remove('correct', 'wrong');
+                };
+                indicator2.appendChild(btn);
+            });
+        }
+
+        function getCorrectWords() {
+            return sentences[currentIndex].correctAnswer.match(/【(.*?)】/g).map(t => t.slice(1,-1));
+        }
+
+        function getCorrectAnswerWithSpaces() {
+            const words = getCorrectWords();
+            return words.join(' ');
+        }
+
+        function checkAnswer() {
+            const userStr = selectedWords.join('');
+            const correctStr = getCorrectWords().join('');
+            const isCorrect = userStr === correctStr;
+
+            if (!isFreeMode && userAnswers[currentIndex] === null) {
+                userAnswers[currentIndex] = selectedWords.join(' ');
+                if (isCorrect) correctCount++;
+                updateScore();
+            }
+
+            if (isCorrect) {
+                indicator2.classList.add('correct');
+                indicator2.classList.remove('wrong');
+                correctAudio.play();
+                playOriginalSentenceExactly();
+            } else {
+                indicator2.classList.add('wrong');
+                wrongAudio.play();
+                
+                // Trong chế độ 作业模式, phát âm thanh ngay cả khi sai
+                if (!isFreeMode) {
+                    playOriginalSentenceExactly();
+                }
+            }
+
+            const delay = 1200;
+            
+            const moveToNextSentence = () => {
+                if (isFreeMode) {
+                    if (autoContinue && isCorrect) {
+                        nextSentence();
+                    }
+                } else {
+                    if (currentIndex < sentences.length - 1) {
+                        currentIndex++;
+                        updateDisplay();
+                    } else {
+                        showFinalResults();
+                    }
+                }
+            };
+            
+            setTimeout(() => {
+                if (!isAudioPlaying) {
+                    moveToNextSentence();
+                } else {
+                    const checkAudioEnd = setInterval(() => {
+                        if (!isAudioPlaying) {
+                            clearInterval(checkAudioEnd);
+                            moveToNextSentence();
+                        }
+                    }, 100);
+                }
+            }, delay);
+        }
+
+        function playOriginalSentenceExactly() {
+            const s = sentences[currentIndex];
+            audio.src = s.audioFile;
+            audio.currentTime = s.start;
+            isAudioPlaying = true;
+            audio.play();
+
+            const stopAtEnd = () => {
+                if (audio.currentTime >= s.end) {
+                    audio.pause();
+                    isAudioPlaying = false;
+                    audio.removeEventListener('timeupdate', stopAtEnd);
+                }
+            };
+            audio.addEventListener('timeupdate', stopAtEnd);
+            
+            audio.addEventListener('ended', () => {
+                isAudioPlaying = false;
+            });
+        }
+
+        document.getElementById('replayBtn').onclick = playOriginalSentenceExactly;
+
+        function showFinalResults() {
+            let text = `练习完成！\n正确：${correctCount}/${sentences.length}（${(correctCount/sentences.length*100).toFixed(1)}%）\n\n`;
+            
+            let hasWrong = false;
+            let wrongQuestionsText = "错题回顾：\n";
+            
+            for (let i = 0; i < sentences.length; i++) {
+                const correctWords = getCorrectWordsFromSentence(sentences[i]);
+                const correctAnswerWithSpaces = correctWords.join(' ');
+                
+                if (userAnswers[i] && userAnswers[i] !== correctAnswerWithSpaces) {
+                    hasWrong = true;
+                    wrongQuestionsText += `${i+1}. ${sentences[i].translation}\n   你的答案: ${userAnswers[i]}\n   正确答案: ${correctAnswerWithSpaces}\n\n`;
+                }
+            }
+            
+            if (hasWrong) {
+                text += wrongQuestionsText;
+            } else {
+                text += "全对！太厉害了！";
+            }
+            
+            resultsDisplay.textContent = text;
+            resultsDisplay.style.display = 'block';
+            scoreDisplay.style.display = 'none';
+        }
+
+        function getCorrectWordsFromSentence(sentence) {
+            return sentence.correctAnswer.match(/【(.*?)】/g).map(t => t.slice(1,-1));
+        }
+
+        function updateScore() {
+            scoreDisplay.textContent = `${correctCount}/${sentences.length}`;
+        }
+
+        function nextSentence() {
+            if (currentIndex < sentences.length - 1) {
+                currentIndex++;
+                updateDisplay();
+            } else if (isFreeMode) {
+                currentIndex = 0;
+                updateDisplay();
+            }
+        }
+
+        function prevSentence() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateDisplay();
+            } else if (isFreeMode) {
+                currentIndex = sentences.length - 1;
+                updateDisplay();
+            }
+        }
+
+        function shuffleArray(a) {
+            const arr = [...a];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        document.getElementById('freeModeBtn').onclick = () => {
+            isFreeMode = true;
+            document.getElementById('freeModeBtn').classList.add('active-mode');
+            document.getElementById('testModeBtn').classList.remove('active-mode');
+            scoreDisplay.style.display = 'none';
+            resultsDisplay.style.display = 'none';
+            updateDisplay();
+        };
+
+        document.getElementById('testModeBtn').onclick = () => {
+            isFreeMode = false;
+            document.getElementById('testModeBtn').classList.add('active-mode');
+            document.getElementById('freeModeBtn').classList.remove('active-mode');
+            scoreDisplay.style.display = 'block';
+            resultsDisplay.style.display = 'none';
+            currentIndex = 0;
+            correctCount = 0;
+            userAnswers = new Array(sentences.length).fill(null);
+            updateDisplay();
+        };
+
+        document.getElementById('prevBtn').onclick = () => {
+            if (isFreeMode) {
+                prevSentence();
+            } else if (currentIndex > 0) {
+                currentIndex--;
+                updateDisplay();
+            }
+        };
+        
+        document.getElementById('nextBtn').onclick = () => {
+            if (isFreeMode) {
+                nextSentence();
+            } else if (currentIndex < sentences.length - 1) {
+                currentIndex++;
+                updateDisplay();
+            }
+        };
+
+        document.getElementById('autoContinueBtn').onclick = () => {
+            autoContinue = !autoContinue;
+            document.getElementById('autoContinueBtn').classList.toggle('active-mode', autoContinue);
+        };
+
+        document.getElementById('showHideBtn').onclick = () => {
+            showTranslation = !showTranslation;
+            document.getElementById('showHideBtn').classList.toggle('active-mode', showTranslation);
+            updateDisplay();
+        };
+
+        sentenceNumber.onchange = () => {
+            if (isFreeMode) {
+                const n = parseInt(sentenceNumber.value) - 1;
+                if (n >= 0 && n < sentences.length) { 
+                    currentIndex = n; 
+                    updateDisplay(); 
+                }
+            }
+        };
+
+        init();
+    </script>
+</body>
+</html>
